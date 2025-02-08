@@ -8,7 +8,7 @@ import textwrap
 
 from . import consts
 
-DIR_FOR_LINKER = os.environ.get("MCL_PATH", "/usr/local/lib/libmcl")
+DIR_FOR_LINKER = os.environ.get("MCL_PATH", "/usr/local")
 
 
 @contextlib.contextmanager
@@ -45,15 +45,16 @@ def get_dll(path, *args):
 with change_cwd(DIR_FOR_LINKER):
     system = platform.system()
     if system == "Darwin":
-        mclbls12_384 = get_dll("lib/libmclbn384_256.dylib")
+        mclbn384_256 = get_dll("lib/libmclbn384_256.dylib")
     elif system == "Linux":
-        get_dll("lib/libmcl.so", ctypes.RTLD_GLOBAL)
-        mclbls12_384 = get_dll("lib/libmclbn384_256.so")
+        get_dll('lib/libmcl.so', ctypes.RTLD_GLOBAL)
+        mclbn384_256 = get_dll("lib/libmclbn384_256.so")
     else:
         raise RuntimeError(f"Unsupported OS {system}")
 
 
-ret = mclbls12_384.mclBn_init(consts.BLS12_381, consts.MCLBN_COMPILED_TIME_VAR)
+# ret = mclbn384_256.mclBn_init(consts.BN384_256, consts.MCLBN_COMPILED_TIME_VAR)
+ret = mclbn384_256.mclBn_init(consts.BN_SNARK1, consts.MCLBN_COMPILED_TIME_VAR)
 
 if ret:
-    raise RuntimeError(f"mclbls12_384 ret {ret}")
+    raise RuntimeError(f"mclbn384_256 ret {ret}")
